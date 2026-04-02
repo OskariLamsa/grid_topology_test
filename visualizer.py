@@ -2,6 +2,7 @@ import pygame
 from time import sleep
 import sys
 import math
+import random
 
 # Colors
 RED = (255, 0, 0)
@@ -14,7 +15,6 @@ PURPLE = (128, 0, 128)
 ORANGE = (255, 165, 0)
 GREY = (128, 128, 128)
 TURQUOISE = (64, 224, 208)
-OFF_WHITE = (240, 240, 240)
 
 
 class Spot:
@@ -95,8 +95,8 @@ class Spot:
     def draw(self, surface):
         if self.mode == "square":
             surface.fill(self.color, self.get_rect())
-        elif self.mode == "hexagon":
-            pygame.draw.polygon(surface, BLACK, self.get_hex_points())
+        elif self.mode == "hex":
+            pygame.draw.polygon(surface, self.color, self.get_hex_points())
 
     def is_valid_and_walkable(self, grid, drow, dcol):
         # Tarkista, onko haluttu paikka ruudukon sisällä, ja onko se valkoinen, tai maali
@@ -127,40 +127,54 @@ class Spot:
             (0, 1), # Oikea
             (0, -1), # Vasen
         ]
-        diagonal_directions = [
-            (1, 1), # Oikea-alas
-            (1, -1), # Vasen-alas
-            (-1, 1), # Oikea-ylos
-            (-1, -1) # Vasen-ylos
-        ]
+        if self.mode == "square":
+            diagonal_directions = [
+                (1, 1), # Oikea-alas
+                (1, -1), # Vasen-alas
+                (-1, 1), # Oikea-ylos
+                (-1, -1) # Vasen-ylos
+            ]
+        # Ei lisätä viistossa olevaa naapuria, jos siihen meneminen tarvitsisi kahden esteen läpi menoa
+            for drow, dcol in diagonal_directions:
+                if self.is_valid_and_walkable(grid, drow, dcol):
+                    if not (not self.is_valid_and_walkable(grid, drow, 0) and not self.is_valid_and_walkable(grid, 0, dcol)):
+                        self.neighbors.append(self.get_neighbor(grid, drow, dcol))
+        if self.mode == "hex":
+            diagonal_directions = [
+                (1, 1), # Oikea-alas
+                (1, -1), # Vasen-alas
+            ]
+            for drow, dcol in diagonal_directions:
+                if self.is_valid_and_walkable(grid, drow, dcol):
+                    self.neighbors.append(self.get_neighbor(grid, drow, dcol))
         
         for drow, dcol in directions:
             if self.is_valid_and_walkable(grid, drow, dcol):
                 self.neighbors.append(self.get_neighbor(grid, drow, dcol))
-        # Ei lisätä viistossa olevaa naapuria, jos siihen meneminen tarvitsisi kahden esteen läpi menoa
-        for drow, dcol in diagonal_directions:
-            if self.is_valid_and_walkable(grid, drow, dcol):
-                if not (not self.is_valid_and_walkable(grid, drow, 0) and not self.is_valid_and_walkable(grid, 0, dcol)):
-                    self.neighbors.append(self.get_neighbor(grid, drow, dcol))
+
           
     def __lt__(self, other):
         return False
     
     def get_hex_points(self):
-        size = self.width // 2
-        center_x = self.x + size
-        center_y = self.y + size
+        r = self.width / 2  # circumradius
+        h = r * math.sqrt(3) / 2  # inradius (center to flat edge)
+
+        # Flat-top hex: column spacing = 1.5 * r, row spacing = sqrt(3) * r
+        center_x = self.col * 1.5 * r + r
+        center_y = self.row * math.sqrt(3) * r + (math.sqrt(3) * r / 2 if self.col % 2 == 1 else 0) + r
+
         points = []
         for i in range(6):
-            angle_deg = 60 * i - 30
-            angle_rad = math.radians(angle_deg)
-            x = center_x + size * math.cos(angle_rad)
-            y = center_y + size * math.sin(angle_rad)
+            angle_rad = math.radians(60 * i)  # flat-top: start at 0°
+            x = center_x + r * math.cos(angle_rad)
+            y = center_y + r * math.sin(angle_rad)
             points.append((x, y))
         return points
+    """
     def get_hex(self, surface):
-        pygame.draw.polygon(surface, BLACK, self.get_hex_points())
-
+        pygame.draw.polygon(surface, random.choice(["BLACK","BLUE","GREEN","PURPLE"]), self.get_hex_points())
+    """
 class Visualizer:
     def __init__(self, width=800, dimensions=50, mode="square", caption="No name given.",
                 map_data=None, start_pos = None, end_pos = None):
@@ -191,8 +205,17 @@ class Visualizer:
             r, c = end_pos
             self.end = self.grid[r][c]
             self.end.make_end()
+        gap = width // max(self.rows, self.cols)
 
-        self.background = pygame.Surface((width, width)).convert()
+        if mode == "hex":
+            r = gap / 2
+            hex_grid_w = int(self.cols * 1.5 * r + 0.5 * r + r)
+            hex_grid_h = int(self.rows * math.sqrt(3) * r + math.sqrt(3) * r / 2 + r)
+            self.win = pygame.display.set_mode((hex_grid_w, hex_grid_h))
+        else:
+            self.win = pygame.display.set_mode((width, width))
+        ...
+        self.background = pygame.Surface(self.win.get_size()).convert()
         self._render_background()
         self._initial_drawn = False
         if map_data is not None:
@@ -204,7 +227,7 @@ class Visualizer:
             spot.make_barrier()
 
     def _render_background(self):
-        self.background.fill(OFF_WHITE)
+        self.background.fill(WHITE)
 
     def make_grid(self, rows, cols, width, mode = "square"):
         grid = []
@@ -220,10 +243,9 @@ class Visualizer:
     def mark_dirty(self, spot):
         if spot.mode == "square":
             rect = spot.get_rect()
-            self._dirty_nodes.add((rect.x, rect.y, rect.w, rect.h))
-        elif spot.mode == "hexagon":
-            hex = spot.get_hex_points()
-            self._dirty_nodes.add(())
+            self._dirty_nodes.add(("square",spot.row, spot.col, rect.x, rect.y, rect.w, rect.h))
+        elif spot.mode == "hex":
+            self._dirty_nodes.add(("hex", spot.row, spot.col, *spot.get_hex_points()))
     def draw(self):
         if not self._initial_drawn:
             self.win.blit(self.background, (0, 0))
@@ -237,31 +259,51 @@ class Visualizer:
 
         if not self._dirty_nodes:
             return
-
+        #print("I am within draw, and I have these dirty nodes:", self._dirty_nodes)
         rects_to_update = []
-        for x, y, w, h in list(self._dirty_nodes):
-            src_rect = pygame.Rect(x, y, w, h)
-            self.win.blit(self.background, (x, y), src_rect)
-            rects_to_update.append(src_rect)
-            
-            gap = self.width // max(self.rows, self.cols)
-            r = min(y // gap, self.rows - 1)
-            c = min(x // gap, self.cols - 1)
-            
+        for node in list(self._dirty_nodes):
+            if node[0] == "square":
+                _, r, c, x, y, w, h = node
+                src_rect = pygame.Rect(x, y, w, h)
+                self.win.blit(self.background, (x, y), src_rect)
+                rects_to_update.append(src_rect)
+            elif node[0] == "hex":
+                _, r, c, *hex_points = node
+                xs = [p[0] for p in hex_points]
+                ys = [p[1] for p in hex_points]
+                x, y = min(xs), min(ys)
+                w, h = max(xs) - x, max(ys) - y
+                bounding_rect = pygame.Rect(x, y, w, h)
+                #self.win.blit(self.background, (x, y), bounding_rect)
+                rects_to_update.append(bounding_rect)        
+            #gap = self.width // max(self.rows, self.cols)
+            #r = min(y // gap, self.rows - 1)
+            #c = min(x // gap, self.cols - 1)
             if 0 <= r < self.rows and 0 <= c < self.cols:
                 self.grid[r][c].draw(self.win)
+           
 
         self._dirty_nodes.clear()
-
-        pygame.display.update(rects_to_update)
+        try:
+            pygame.display.update(rects_to_update)
+            print(rects_to_update)
+        except ValueError:
+            print(rects_to_update, node)
 
     def get_clicked_pos(self, pos):
-        gap = self.width // max(self.rows, self.cols)
         x, y = pos
-        row = y // gap
-        col = x // gap
+        if self.mode == "hex":
+            r = (self.width // max(self.rows, self.cols)) / 2
+            col = int(x / (1.5 * r))
+            # account for the half-hex vertical offset on odd columns
+            row_offset = (math.sqrt(3) * r / 2) if col % 2 == 1 else 0
+            row = int((y - row_offset) / (math.sqrt(3) * r))
+        else:
+            gap = self.width // max(self.rows, self.cols)
+            row = y // gap
+            col = x // gap
+        print("Clicked: row=", row, "col=", col)
         return row, col
-
     def reset_grid(self):
         self.start = None
         self.end = None
@@ -324,11 +366,11 @@ class Visualizer:
         """User edits the map and chooses start/end."""
         run = True
         clock = pygame.time.Clock()
-        self.draw()
         spot = self.grid[10][10]
-        spot.mode = "square"
+        spot.mode = "hex"
         spot.make_barrier()
-        print(self._dirty_nodes)
+        print(self.mode)
+        #print(self._dirty_nodes)
         while run:
             clock.tick(120)
             self.draw()
@@ -345,6 +387,8 @@ class Visualizer:
                             spot = self.grid[row][col]
                         except IndexError:
                             print(f"Clicked out of bounds: row={row}, col={col}")
+                        if self.mode == "hex":
+                            spot.mode = "hex"
                         if not self.start:
                             self.start = spot
                             spot.make_start()
@@ -358,6 +402,8 @@ class Visualizer:
                     row, col = self.get_clicked_pos(pygame.mouse.get_pos())
                     if 0 <= row < self.rows and 0 <= col < self.cols:
                         spot = self.grid[row][col]
+                        if self.mode == "hex":
+                            spot.mode = "hex"
                         spot.reset()
                         if spot == self.start:
                             self.start = None

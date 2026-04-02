@@ -1,18 +1,6 @@
 from queue import PriorityQueue
-from time import sleep
 import time
 from math import sqrt
-
-
-def move_cost(a, b):
-    x1, y1 = a.get_pos()
-    x2, y2 = b.get_pos()
-
-    # viisto liike = 1.41421356237
-    if x1 != x2 and y1 != y2:
-        return sqrt(2)
-    # kardinaali liike = 1
-    return 1
 
 def h(p1, p2):
     #Octile distance heuristiikka
@@ -30,7 +18,7 @@ def reconstruct_path(came_from, current, draw):
 
 
 def algorithm(draw, grid, start, end):
-    # a* algoritmi
+    # came_from, open_set ja aloitussolmu open_settiin
     start_time = time.time()
     count = 0
     open_set = PriorityQueue()
@@ -56,7 +44,7 @@ def algorithm(draw, grid, start, end):
             return (end_time - start_time, f_score[end])
 
         for neighbor in current.neighbors:
-            temp_g_score = g_score[current] + move_cost(current, neighbor)
+            temp_g_score = g_score[current] + 1
 
             if temp_g_score < g_score[neighbor]:
                 came_from[neighbor] = current
@@ -67,7 +55,7 @@ def algorithm(draw, grid, start, end):
                     open_set.put((f_score[neighbor], count, neighbor))
                     open_set_hash.add(neighbor)
                     neighbor.make_open()
-        sleep(0.03)
+        time.sleep(0.3)
         draw()
 
         if current != start:
@@ -87,13 +75,13 @@ if __name__ == "__main__":
             custom_rows = int(custom_rows)
         except ValueError:
             custom_rows = custom_rows.split(",")
-        v = Visualizer(width=800, dimensions=(int(custom_rows[0]), int(custom_rows[1])), caption="a*", map_data=map_data)
+        v = Visualizer(width=800, dimensions=(int(custom_rows[0]), int(custom_rows[1])), caption="a*", map_data=map_data, mode="hex")
     else:
         print("Called astar with map_data" \
         "")
         map_data = sys.argv[1]
         map_data = map_loader(map_data)
-        v = Visualizer(width=1100, dimensions=250, caption="a*", map_data=map_data)
+        v = Visualizer(width=1100, dimensions=250, caption="a*", map_data=map_data, start_pos = (21, 812), end_pos =(607,267))
     if v.edit_loop():
         resolution_time, distance = v.run_algorithm(algorithm)
     #    resolution_time, distance = v.run(algorithm)  
