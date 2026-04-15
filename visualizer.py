@@ -119,7 +119,9 @@ class Spot:
         return None
     
     def update_neighbors(self, grid):
-        # Käytä tätä, kun ajat Astar
+        # Päivittää naapurit. Jos harrastat nelioitä, niin kaikki 8 suuntaa.
+        # Jos käytossä on sen sijaan kuusiot, niin kaksi viistosuuntaa jätetään
+        # pois, riippuen siitä onko kolmuni parillinen vai pariton
         self.neighbors = []
         directions = [
             (1, 0), # Alas
@@ -140,18 +142,35 @@ class Spot:
                     if not (not self.is_valid_and_walkable(grid, drow, 0) and not self.is_valid_and_walkable(grid, 0, dcol)):
                         self.neighbors.append(self.get_neighbor(grid, drow, dcol))
         if self.mode == "hex":
-            diagonal_directions = [
-                (1, 1), # Oikea-alas
-                (1, -1), # Vasen-alas
+            if self.col % 2 == 1:
+                diagonal_directions = [
+                    (1, 1), # Oikea-alas
+                    (1, -1) # Vasen-alas
             ]
+            else:
+                diagonal_directions = [
+                    (-1,-1), # Vasen-ylos
+                    (-1,1)  # Oikea-ylos
+                ]
             for drow, dcol in diagonal_directions:
                 if self.is_valid_and_walkable(grid, drow, dcol):
+            #        print(f"Checked diagonal row:{drow}, col:{dcol} and it is valid")
                     self.neighbors.append(self.get_neighbor(grid, drow, dcol))
+                else:
+            #        print(f"Checked diagonal row:{drow}, col:{dcol} and it is NOT")
+                    pass
         
         for drow, dcol in directions:
             if self.is_valid_and_walkable(grid, drow, dcol):
+            #    print(f"Checked cardinal row:{drow}, col:{dcol} and it is valid")
                 self.neighbors.append(self.get_neighbor(grid, drow, dcol))
-
+            else:
+            #    print(f"Checked cardinal row:{drow}, col:{dcol} and it is NOT")
+                pass
+        #print("Neighbors I wish to return!")
+        for i in self.neighbors:
+            #print(i.row, i.col)
+            pass
           
     def __lt__(self, other):
         return False
@@ -198,6 +217,8 @@ class Visualizer:
         self._dirty_nodes = set()
         if start_pos:
             r, c = start_pos
+            print(f"I want to make start be: {r, c}")
+            print(f"grid size is: {self.rows, self.cols}")
             self.start = self.grid[r][c]
             self.start.make_start()
         self.end = None
@@ -366,11 +387,7 @@ class Visualizer:
         """User edits the map and chooses start/end."""
         run = True
         clock = pygame.time.Clock()
-        spot = self.grid[10][10]
-        spot.mode = "hex"
-        spot.make_barrier()
         print(self.mode)
-        #print(self._dirty_nodes)
         while run:
             clock.tick(120)
             self.draw()

@@ -67,7 +67,7 @@ def algorithm(draw, grid, start, end):
                     open_set.put((f_score[neighbor], count, neighbor))
                     open_set_hash.add(neighbor)
                     neighbor.make_open()
-        sleep(0.03)
+        sleep(0.06)
         draw()
 
         if current != start:
