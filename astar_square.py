@@ -20,8 +20,10 @@ def h(p1, p2):
     x2, y2 = p2
     x_distance = abs(x1 - x2)
     y_distance = abs(y1 - y2)
-    return (max(x_distance,y_distance) + (0.414)*min(x_distance, y_distance))*2
-
+    result = (max(x_distance,y_distance) + (sqrt(2)-1)*min(x_distance, y_distance))
+    #result = x_distance + 0.414 * y_distance if x_distance > y_distance else y_distance + 0.414 * x_distance
+    #print(result)
+    return result
 def reconstruct_path(came_from, current, draw):
     while current in came_from:
         current = came_from[current]
@@ -34,7 +36,7 @@ def algorithm(draw, grid, start, end):
     start_time = time.time()
     count = 0
     open_set = PriorityQueue()
-    open_set.put((0, count, start))
+    open_set.put((0, h(start.get_pos(),end.get_pos()), count, start))
     came_from = {}
 
     # algoritmin alussa asetetaan jokaisen noden g- ja f-arvoksi loputon.
@@ -46,9 +48,9 @@ def algorithm(draw, grid, start, end):
     open_set_hash = {start}
 
     while not open_set.empty():
-        current = open_set.get()[2]
+        current = open_set.get()[3]
         open_set_hash.remove(current)
-
+        #print(f"current:{current.get_pos()}, f_socre:{f_score[current]}, heuristic:{h(current.get_pos(), end.get_pos())}")
         if current == end:
             reconstruct_path(came_from, end, draw)
             end.make_end()
@@ -60,14 +62,15 @@ def algorithm(draw, grid, start, end):
 
             if temp_g_score < g_score[neighbor]:
                 came_from[neighbor] = current
+                heuristic = h(neighbor.get_pos(), end.get_pos())
                 g_score[neighbor] = temp_g_score
-                f_score[neighbor] = temp_g_score + h(neighbor.get_pos(), end.get_pos())
+                f_score[neighbor] = temp_g_score + heuristic
                 if neighbor not in open_set_hash and neighbor.color != (255, 0, 0):
                     count += 1
-                    open_set.put((f_score[neighbor], count, neighbor))
+                    open_set.put((f_score[neighbor], heuristic, count, neighbor))
                     open_set_hash.add(neighbor)
                     neighbor.make_open()
-        sleep(0.06)
+        #sleep(0.06)
         draw()
 
         if current != start:

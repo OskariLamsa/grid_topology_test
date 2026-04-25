@@ -16,6 +16,7 @@ def h(p1, p2):
     x2, y2, z2 = oddq_to_cube(row2, col2)
 
     calc = (abs(x1 - x2) + abs(y1 - y2) + abs(z1 - z2)) // 2
+    print(p1, p2,calc)
     return calc
 def reconstruct_path(came_from, current, draw):
     while current in came_from:
@@ -49,7 +50,7 @@ def algorithm(draw, grid, start, end):
             end.make_end()
             end_time = time.time()
             return (end_time - start_time, f_score[end])
-        print(f"current's row:{current.row}, col:{current.col}")
+        #print(f"current's row:{current.row}, col:{current.col}")
         for neighbor in current.neighbors:
             heuristic = h(neighbor.get_pos(), end.get_pos()) * 2
             temp_g_score = g_score[current] + 1
@@ -63,7 +64,7 @@ def algorithm(draw, grid, start, end):
                     open_set.put((f_score[neighbor], heuristic, count, neighbor))
                     open_set_hash.add(neighbor)
                     neighbor.make_open()
-        time.sleep(0.1)
+        #time.sleep(0.1)
         draw()
 
         if current != start:

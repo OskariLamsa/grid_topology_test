@@ -205,8 +205,9 @@ class Visualizer:
                 self.rows = dimensions
                 self.cols = dimensions
         else:
+            print(map_data[0])
             self.rows = int(map_data[0][0])
-            self.cols = int(map_data[0][0])
+            self.cols = int(map_data[0][1])
         pygame.init()
         self.width = width
         self.win = pygame.display.set_mode((width, width))
@@ -221,11 +222,27 @@ class Visualizer:
             print(f"grid size is: {self.rows, self.cols}")
             self.start = self.grid[r][c]
             self.start.make_start()
+        elif map_data != None:
+            if len(map_data[0]) > 2:
+                r = int(map_data[0][2])
+                c = int(map_data[0][3])
+                print(f"I want to make start be: {r, c}")
+                print(f"grid size is: {self.rows, self.cols}")
+                self.start = self.grid[r][c]
+                self.start.make_start()
         self.end = None
         if end_pos:
             r, c = end_pos
             self.end = self.grid[r][c]
             self.end.make_end()
+        elif map_data != None:
+            if len(map_data[0]) > 2:
+                r = int(map_data[0][4])
+                c = int(map_data[0][5])
+                print(f"I want to make end be: {r, c}")
+                print(f"grid size is: {self.rows, self.cols}")
+                self.end = self.grid[r][c]
+                self.end.make_end()
         gap = width // max(self.rows, self.cols)
 
         if mode == "hex":
@@ -243,10 +260,12 @@ class Visualizer:
             self._draw_map_barriers(map_data)
 
     def _draw_map_barriers(self, map_data):
-        for i in map_data[1:]:
-            spot = self.grid[i[0]][i[1]]
-            spot.make_barrier()
-
+        try:
+            for i in map_data[1:]:
+                spot = self.grid[i[0]][i[1]]
+                spot.make_barrier()
+        except IndexError:
+            print(f"Tried to make barrier at {i[0], i[1]} but grid size is only {self.rows, self.cols}")
     def _render_background(self):
         self.background.fill(WHITE)
 
@@ -307,9 +326,10 @@ class Visualizer:
         self._dirty_nodes.clear()
         try:
             pygame.display.update(rects_to_update)
-            print(rects_to_update)
+            #print(rects_to_update)
         except ValueError:
-            print(rects_to_update, node)
+            #print(rects_to_update, node)
+            pass
 
     def get_clicked_pos(self, pos):
         x, y = pos

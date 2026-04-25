@@ -16,8 +16,8 @@ def map_loader(file_name, base_dir=None):
         map_data = []
         for line in f:
             parts = line.strip().split(";")
-            if len(parts) != 2:
-                continue
+            if len(parts) == 6:
+                map_data.append((int(parts[0]), int(parts[1]), parts[2], parts[3], parts[4], parts[5]))
             else:
                 map_data.append((int(parts[0]), int(parts[1])))
         return map_data
