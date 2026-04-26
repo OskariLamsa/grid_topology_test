@@ -222,6 +222,90 @@ def nearest_free_hex_node(
 
     return best
 
+def sample_continuous_start_goal(
+    obstacles,
+    world_width,
+    world_height,
+    rng=None,
+    min_continuous_distance=0.0,
+    max_pair_attempts=1000,
+):
+    if rng is None:
+        rng = random.Random()
+
+    for _ in range(max_pair_attempts):
+        sx, sy = random_free_point(obstacles, world_width, world_height, rng)
+        gx, gy = random_free_point(obstacles, world_width, world_height, rng)
+
+        dist = math.hypot(gx - sx, gy - sy)
+        if dist < min_continuous_distance:
+            continue
+
+        return {
+            "continuous_start": (sx, sy),
+            "continuous_goal": (gx, gy),
+            "continuous_distance": dist,
+        }
+
+    raise RuntimeError(
+        f"Failed to pick a valid continuous start/goal pair with minimum distance "
+        f"{min_continuous_distance}"
+    )
+def snap_start_goal_to_grids(
+    continuous_start,
+    continuous_goal,
+    world_width,
+    world_height,
+    square_rows,
+    square_cols,
+    square_blocked,
+    hex_dims,
+    hex_blocked,
+):
+    sx, sy = continuous_start
+    gx, gy = continuous_goal
+
+    square_blocked_set = set(square_blocked)
+    hex_blocked_set = set(hex_blocked)
+
+    square_start = nearest_free_square_node(
+        sx, sy,
+        world_width, world_height,
+        square_rows, square_cols,
+        square_blocked_set,
+    )
+
+    square_goal = nearest_free_square_node(
+        gx, gy,
+        world_width, world_height,
+        square_rows, square_cols,
+        square_blocked_set,
+    )
+
+    hex_start = nearest_free_hex_node(
+        sx, sy,
+        hex_dims["hex_rows"],
+        hex_dims["hex_cols"],
+        hex_dims["hex_side"],
+        world_height,
+        hex_blocked_set,
+    )
+
+    hex_goal = nearest_free_hex_node(
+        gx, gy,
+        hex_dims["hex_rows"],
+        hex_dims["hex_cols"],
+        hex_dims["hex_side"],
+        world_height,
+        hex_blocked_set,
+    )
+
+    return {
+        "square_start": square_start,
+        "square_goal": square_goal,
+        "hex_start": hex_start,
+        "hex_goal": hex_goal,
+    }
 def sample_start_goal(
     obstacles,
     world_width,

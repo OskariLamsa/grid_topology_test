@@ -15,8 +15,11 @@ def h(p1, p2):
     x1, y1, z1 = oddq_to_cube(row1, col1)
     x2, y2, z2 = oddq_to_cube(row2, col2)
 
-    calc = (abs(x1 - x2) + abs(y1 - y2) + abs(z1 - z2)) // 2
-    return calc
+    return max(
+        abs(x1 - x2),
+        abs(y1 - y2),
+        abs(z1 - z2),
+    )
 def reconstruct_path(came_from, current, draw):
     while current in came_from:
         current = came_from[current]

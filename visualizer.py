@@ -327,7 +327,7 @@ class Visualizer:
     """
     def draw(self):
         pass
-    """
+    """    
     def get_clicked_pos(self, pos):
         x, y = pos
         if self.mode == "hex":

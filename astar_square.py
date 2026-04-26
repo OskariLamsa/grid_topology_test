@@ -20,9 +20,7 @@ def h(p1, p2):
     x2, y2 = p2
     x_distance = abs(x1 - x2)
     y_distance = abs(y1 - y2)
-    result = (max(x_distance,y_distance) + (sqrt(2)-1)*min(x_distance, y_distance))
-    #result = x_distance + 0.414 * y_distance if x_distance > y_distance else y_distance + 0.414 * x_distance
-    #print(result)
+    result = (max(x_distance,y_distance) + (sqrt(2)-1)*min(x_distance, y_distance)))
     return result
 def reconstruct_path(came_from, current, draw):
     while current in came_from:
