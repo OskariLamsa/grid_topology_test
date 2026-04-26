@@ -4,7 +4,8 @@ import astar_square
 import astar_hex
 import csv
 import main
-
+def original_square_node_count_from_name(name):
+    return int(name.split("x")[0])
 def test_all():
     map_01 = main.list_maps("0.10")
     map_02 = main.list_maps("0.20")
@@ -17,15 +18,18 @@ def test_all():
             writer = csv.writer(file, delimiter=';')
             for i in map_list:
                 map_data = map_loader(f"{i}.csv", None, filename[counter])
-                square_move_distance = 100/map_data[0][0]
-                if i[7] == "s":
+                original_node_count = original_square_node_count_from_name(i)
+                square_move_distance = 100 / original_node_count
+                if "square" in i:
                     mode = "square"
                     v = Visualizer(width=1000, dimensions=250, caption=f"{i}", map_data=map_data, mode = "square")
                     time, distance = v.run_algorithm(astar_square.algorithm)
-                else:
+                elif "hex" in i:
                     mode = "hex"
                     v = Visualizer(width=1000, dimensions=250, caption=f"{i}", map_data=map_data, mode = "hex")
                     time, distance = v.run_algorithm(astar_hex.algorithm)
+                else:
+                    raise ValueError(f"Invalid map name: {i}")
                 if mode == "square":
                     distance = distance * square_move_distance
                 else:

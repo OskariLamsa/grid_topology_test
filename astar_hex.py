@@ -26,26 +26,37 @@ def reconstruct_path(came_from, current, draw):
 
 def algorithm(draw, grid, start, end):
     count = 0
+    start_time = time.time()
     open_set = PriorityQueue()
     open_set.put((h(start.get_pos(), end.get_pos()), 0, count, start))
-    start_time = time.time()
+
     came_from = {}
     g_score = {pixel: float("inf") for row in grid for pixel in row}
     g_score[start] = 0
-
     closed = set()
-
+    open_nodes = {start}
+    #Seuraavat muuttujat kerätään suorituksen aikana tilastoja varten
+    stats = {
+        "heap_pushes": 1,
+        "max_heap_size": 1,
+        "heap_pops" : 0,
+        "expanded_nodes": 0,
+        "max_open_unique_nodes": 1,
+        "stale_pops": 0,
+    }
     while not open_set.empty():
-        queued_f, queued_g, _, current = open_set.get()
-
+        queued_f, queued_h, _, current = open_set.get()
+        stats["heap_pops"] += 1
         if current in closed:
+            stats["stale_pops"] += 1
             continue
-
+        open_nodes.discard(current)
+        stats["expanded_nodes"] += 1
         if current == end:
             reconstruct_path(came_from, end, draw)
             end.make_end()
-            #time.sleep(5)
-            return time.time() - start_time, g_score[end]
+            time.sleep(5)
+            return time.time() - start_time, g_score[end], stats
 
         closed.add(current)
 
@@ -64,7 +75,14 @@ def algorithm(draw, grid, start, end):
 
                 count += 1
                 open_set.put((f_score, heuristic, count, neighbor))
-
+                stats["heap_pushes"] += 1
+                open_nodes.add(neighbor)
+                stats["max_heap_size"] = max(
+                    stats["max_heap_size"],
+                    open_set.qsize())
+                stats["max_open_unique_nodes"] = max(
+                    stats["max_open_unique_nodes"],
+                    len(open_nodes))
                 if neighbor != end:
                     neighbor.make_open()
 
@@ -74,8 +92,6 @@ def algorithm(draw, grid, start, end):
             current.make_closed()
 
     return "No path was found", ""
-
-
 if __name__ == "__main__":
     import sys
     from visualizer import Visualizer
@@ -96,7 +112,8 @@ if __name__ == "__main__":
         map_data = map_loader(map_data, None, sys.argv[2])
         v = Visualizer(width=1100, dimensions=250, caption="a*", map_data=map_data, mode = "hex")
     if v.edit_loop():
-        resolution_time, distance = v.run_algorithm(algorithm)
+        resolution_time, distance, stats = v.run_algorithm(algorithm)
     #    resolution_time, distance = v.run(algorithm)  
         print(f"Resolved A* in {resolution_time} seconds")
         print(f"Distance: {distance}")
+        print(f"Stats: {stats}")

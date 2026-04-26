@@ -53,6 +53,8 @@ def generate(maps_per_permutation = 5):
                     hex_dims,
                     blocked_hexes,
                     rng=None,
+                    min_continuous_distance=150.0,
+                    max_pair_attempts=1000,
                 )
 
                 continuous_start = sampled["continuous_start"]

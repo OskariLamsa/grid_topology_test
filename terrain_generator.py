@@ -232,14 +232,19 @@ def sample_start_goal(
     hex_dims,
     hex_blocked,
     rng=None,
+    min_continuous_distance=0.0,
+    max_pair_attempts=1000,
 ):
     if rng is None:
         rng = random.Random()
 
-    # sample continuous points
-    sx, sy = random_free_point(obstacles, world_width, world_height, rng)
-    gx, gy = random_free_point(obstacles, world_width, world_height, rng)
+    for _ in range(max_pair_attempts):
+        sx, sy = random_free_point(obstacles, world_width, world_height, rng)
+        gx, gy = random_free_point(obstacles, world_width, world_height, rng)
 
+        dist = math.hypot(gx - sx, gy - sy)
+        if dist < min_continuous_distance:
+            continue
     # square nodes
     square_start = nearest_free_square_node(
         sx, sy,
