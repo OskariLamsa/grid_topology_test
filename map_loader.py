@@ -2,13 +2,14 @@ import os
 import csv
 from pathlib import Path
 
-def map_loader(file_name, base_dir=None):
+def map_loader(file_name, base_dir=None, maps_data_folder="maps_data"):
     #Ottaa tiedostonimen, ja palauttaa listan tupleja 
     if base_dir is None:
         base_dir = Path(__file__).resolve().parent
-    path = os.path.join(base_dir, "maps_data")
+        print(file_name, maps_data_folder)
+    path = os.path.join(base_dir, maps_data_folder)
     if not os.path.isdir(path):
-        return print("maps_data not found")
+        return print(f"{maps_data_folder} not found")
     if file_name.suffix if isinstance(file_name, Path) else not file_name.endswith(".csv"):
         raise ValueError("Invalid file type")
     with open(os.path.join(path, file_name), "r") as f:

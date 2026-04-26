@@ -32,52 +32,56 @@ def reconstruct_path(came_from, current, draw):
 
 
 def algorithm(draw, grid, start, end):
-    # a* algoritmi
-    start_time = time.time()
     count = 0
+    start_time = time.time()
     open_set = PriorityQueue()
-    open_set.put((0, h(start.get_pos(),end.get_pos()), count, start))
-    came_from = {}
+    open_set.put((h(start.get_pos(), end.get_pos()), 0, count, start))
 
-    # algoritmin alussa asetetaan jokaisen noden g- ja f-arvoksi loputon.
+    came_from = {}
     g_score = {pixel: float("inf") for row in grid for pixel in row}
     g_score[start] = 0
-    f_score = {pixel: float("inf") for row in grid for pixel in row}
-    f_score[start] = h(start.get_pos(), end.get_pos())
 
-    open_set_hash = {start}
+    closed = set()
 
     while not open_set.empty():
-        current = open_set.get()[3]
-        open_set_hash.remove(current)
-        #print(f"current:{current.get_pos()}, f_socre:{f_score[current]}, heuristic:{h(current.get_pos(), end.get_pos())}")
+        queued_f, queued_g, _, current = open_set.get()
+
+        if current in closed:
+            continue
+
         if current == end:
             reconstruct_path(came_from, end, draw)
             end.make_end()
-            end_time = time.time()
-            return (end_time - start_time, f_score[end])
+            #sleep(5)
+            return time.time() - start_time, g_score[end]
+
+        closed.add(current)
 
         for neighbor in current.neighbors:
+            if neighbor in closed:
+                continue
+
             temp_g_score = g_score[current] + move_cost(current, neighbor)
 
             if temp_g_score < g_score[neighbor]:
                 came_from[neighbor] = current
-                heuristic = h(neighbor.get_pos(), end.get_pos())
                 g_score[neighbor] = temp_g_score
-                f_score[neighbor] = temp_g_score + heuristic
-                if neighbor not in open_set_hash and neighbor.color != (255, 0, 0):
-                    count += 1
-                    open_set.put((f_score[neighbor], heuristic, count, neighbor))
-                    open_set_hash.add(neighbor)
+
+                heuristic = h(neighbor.get_pos(), end.get_pos())
+                f_score = temp_g_score + heuristic
+
+                count += 1
+                open_set.put((f_score, heuristic, count, neighbor))
+
+                if neighbor != end:
                     neighbor.make_open()
-        #sleep(0.06)
+
         draw()
 
         if current != start:
             current.make_closed()
-    return ("No path was found", "")
 
-
+    return "No path was found", ""
 if __name__ == "__main__":
     import sys
     from visualizer import Visualizer
@@ -95,7 +99,7 @@ if __name__ == "__main__":
         print("Called astar with map_data" \
         "")
         map_data = sys.argv[1]
-        map_data = map_loader(map_data)
+        map_data = map_loader(map_data, None, sys.argv[2])
         v = Visualizer(width=1100, dimensions=250, caption="a*", map_data=map_data)
     if v.edit_loop():
         resolution_time, distance = v.run_algorithm(algorithm)

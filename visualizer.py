@@ -205,7 +205,6 @@ class Visualizer:
                 self.rows = dimensions
                 self.cols = dimensions
         else:
-            print(map_data[0])
             self.rows = int(map_data[0][0])
             self.cols = int(map_data[0][1])
         pygame.init()
@@ -218,16 +217,12 @@ class Visualizer:
         self._dirty_nodes = set()
         if start_pos:
             r, c = start_pos
-            print(f"I want to make start be: {r, c}")
-            print(f"grid size is: {self.rows, self.cols}")
             self.start = self.grid[r][c]
             self.start.make_start()
         elif map_data != None:
             if len(map_data[0]) > 2:
                 r = int(map_data[0][2])
                 c = int(map_data[0][3])
-                print(f"I want to make start be: {r, c}")
-                print(f"grid size is: {self.rows, self.cols}")
                 self.start = self.grid[r][c]
                 self.start.make_start()
         self.end = None
@@ -239,8 +234,6 @@ class Visualizer:
             if len(map_data[0]) > 2:
                 r = int(map_data[0][4])
                 c = int(map_data[0][5])
-                print(f"I want to make end be: {r, c}")
-                print(f"grid size is: {self.rows, self.cols}")
                 self.end = self.grid[r][c]
                 self.end.make_end()
         gap = width // max(self.rows, self.cols)
@@ -286,6 +279,7 @@ class Visualizer:
             self._dirty_nodes.add(("square",spot.row, spot.col, rect.x, rect.y, rect.w, rect.h))
         elif spot.mode == "hex":
             self._dirty_nodes.add(("hex", spot.row, spot.col, *spot.get_hex_points()))
+    
     def draw(self):
         if not self._initial_drawn:
             self.win.blit(self.background, (0, 0))
@@ -330,7 +324,10 @@ class Visualizer:
         except ValueError:
             #print(rects_to_update, node)
             pass
-
+    """
+    def draw(self):
+        pass
+    """
     def get_clicked_pos(self, pos):
         x, y = pos
         if self.mode == "hex":

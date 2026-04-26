@@ -13,8 +13,8 @@ def list_algorithms():
 
     return algorithms
 """
-def list_maps():
-    path = os.path.join(os.path.dirname(__file__), "maps_data")
+def list_maps(maps_data_folder="maps_data"):
+    path = os.path.join(os.path.dirname(__file__), maps_data_folder)
     files = os.listdir(path)
     maps = [
         f[:-4] for f in files
@@ -24,14 +24,13 @@ def list_maps():
 
 
 def main():
-    maps = list_maps()
     grid_choice = input("\nWhich grid type do you want to run? ")
 
     if grid_choice != "square" and grid_choice != "hex":
         print(f"Error: '{grid_choice}' is not a valid grid type. Please choose between 'square' and 'hex'.")
         return
-
-    print("\nAvailable maps are:")
+    folder_choice = input("\nWhich folder's maps? (0.10, 0.20, 0.30) ")
+    maps = list_maps(folder_choice)
     for i in maps:
         print(f" - {i}")
 
@@ -51,7 +50,7 @@ def main():
     elif map_choice == "custom":
         runpy.run_module(f"astar_{grid_choice}", run_name="__main__")
     elif map_choice in maps: 
-        sys.argv = ["", map_choice + ".csv"]
+        sys.argv = ["", map_choice + ".csv", folder_choice]
         runpy.run_module(f"astar_{grid_choice}", run_name="__main__")
     else:    
         print(f"Error. {map_choice} is not a valid map name.")
