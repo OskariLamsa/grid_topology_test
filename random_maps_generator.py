@@ -2,11 +2,13 @@ import terrain_generator
 from terrain_generator import TerrainConfig
 
 
-def generate(maps_per_permutation=5):
-    nodecounts = (200, 500, 1000)
-    densities = (0.10, 0.20, 0.30)
+def generate(maps_per_permutation=50):
+    nodecounts = (50, 200, 500, 1000)
+    densities = (0.40, None)
 
     for density in densities:
+        if density == None:
+            continue
         for map_index in range(maps_per_permutation):
             seed = int(density * 1000) + map_index
 
@@ -127,4 +129,4 @@ def generate(maps_per_permutation=5):
 
 
 if __name__ == "__main__":
-    generate(5)
+    generate(50)
