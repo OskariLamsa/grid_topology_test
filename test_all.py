@@ -33,12 +33,13 @@ def test_all():
                     time, distance, stats = v.run_algorithm(astar_hex.algorithm, headless = True)
                 else:
                     raise ValueError(f"Invalid map name: {map}")
-                if mode == "square":
-                    distance = distance * square_move_distance
-                else:
-                    distance = distance * square_move_distance * 1.074569932
-                time = round(time, 3)
-                distance = round(distance, 3)
+                if type(distance) == int:
+                    if mode == "square":
+                        distance = distance * square_move_distance
+                    else:
+                        distance = distance * square_move_distance * 1.074569932
+                    time = round(time, 3)
+                    distance = round(distance, 3)
 
                 writer.writerow([mode, map, f"{map_data[0][2]},{map_data[0][3]}",
                 f"{map_data[0][4]},{map_data[0][5]}", time, distance,

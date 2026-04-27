@@ -58,7 +58,7 @@ def algorithm(draw, grid, start, end):
         if current == end:
             reconstruct_path(came_from, end, draw)
             end.make_end()
-            time.sleep(5)
+            #time.sleep(5)
             return time.time() - start_time, g_score[end], stats
 
         closed.add(current)
