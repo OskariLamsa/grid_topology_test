@@ -15,12 +15,34 @@ def open_file(file_name):
         for line in f:
             parts = line.strip().split(";")
             if len(parts) > 1:
-                data.append((parts[0], parts[1], parts[2], parts[3], float(parts[4]),
-                    float(parts[5]), int(parts[6]), int(parts[7]), int(parts[8]),
-                    int(parts[9]), int(parts[10]), int(parts[11])))
+                try:
+                    data.append((parts[0], parts[1], parts[2], parts[3], float(parts[4]),
+                            float(parts[5]), int(parts[6]), int(parts[7]), int(parts[8]),
+                            int(parts[9]), int(parts[10]), int(parts[11])))
+                except (ValueError, IndexError):
+                    data.append((parts[0], parts[1], parts[2], parts[3], parts[4],
+                            0, int(parts[6]), int(parts[7]), int(parts[8]),
+                            int(parts[9]), int(parts[10]), int(parts[11])))
             else:
                 continue
         return data
+    
+def stale_pops_calc(first, second):
+    try:
+        first = int(first)
+        second = int(second)
+    except:
+         print("Something really weird happened. First:", first, "Second:", second)
+    if first == 0 or second == 0:
+        return 0
+    else:
+        return first / second
+
+def check_for_zero(first, second):
+    if first == 0 or second == 0:
+        return 0
+    else:
+        return first / second
 
 def report_generator():
     for density in ["0.10", "0.20", "0.30", "0.40"]:
@@ -47,9 +69,9 @@ def report_generator():
                 largest_hex =find_map_by_name(hex_list, f"{density}_1000x1000hex{i}")
                 print(small_square)
                 print(small_hex)
-                file.write(f"| {i}_50x50 | {small_square[4]}/{small_hex[4]} | {small_square[5]}/{small_hex[5]} | {round((small_square[6] /small_hex[6]),3)} | {round((small_square[7] /small_hex[7]),3)} | {round((small_square[8] /small_hex[8]),3)} | {round((small_square[9] /small_hex[9]),3)} | {round((small_square[10] /small_hex[10]),3)} | {round((small_square[11] /small_hex[11]),3)} |\n")
-                file.write(f"| {i}_200x200 | {medium_square[4]}/{medium_hex[4]} | {medium_square[5]}/{medium_hex[5]} | {round((medium_square[6] /medium_hex[6]),3)} | {round((medium_square[7] /medium_hex[7]),3)} | {round((medium_square[8] /medium_hex[8]),3)} | {round((medium_square[9] /medium_hex[9]),3)} | {round((medium_square[10] /medium_hex[10]),3)} | {round((medium_square[11] /medium_hex[11]),3)} |\n")
-                file.write(f"| {i}_500x500 | {large_square[4]}/{large_hex[4]} | {large_square[5]}/{large_hex[5]} | {round((large_square[6] /large_hex[6]),3)} | {round((large_square[7] /large_hex[7]),3)} | {round((large_square[8] /large_hex[8]),3)} | {round((large_square[9] /large_hex[9]),3)} | {round((large_square[10] /large_hex[10]),3)} | {round((large_square[11] /large_hex[11]),3)} |\n")
-                file.write(f"| {i}_1000x1000 | {largest_square[4]}/{largest_hex[4]} | {largest_square[5]}/{largest_hex[5]} | {round((largest_square[6] /largest_hex[6]),3)} | {round((largest_square[7] /largest_hex[7]),3)} | {round((largest_square[8] /largest_hex[8]),3)} | {round((largest_square[9] /largest_hex[9]),3)} | {round((largest_square[10] /largest_hex[10]),3)} | {round((largest_square[11] /largest_hex[11]),3)} |\n")
+                file.write(f"| {i}_50x50 | {small_square[4]}/{small_hex[4]} | {small_square[5]}/{small_hex[5]} | {round(check_for_zero(small_square[6], small_hex[6]),3)} | {round(check_for_zero(small_square[7], small_hex[7]),3)} | {round(check_for_zero(small_square[8], small_hex[8]),3)} | {round(check_for_zero(small_square[9], small_hex[9]),3)} | {round(check_for_zero(small_square[10], small_hex[10]),3)} | {round(stale_pops_calc(small_square[11], small_hex[11]),3)} |\n")
+                file.write(f"| {i}_200x200 | {medium_square[4]}/{medium_hex[4]} | {medium_square[5]}/{medium_hex[5]} | {round(check_for_zero(medium_square[6], medium_hex[6]),3)} | {round(check_for_zero(medium_square[7], medium_hex[7]),3)} | {round(check_for_zero(medium_square[8], medium_hex[8]),3)} | {round(check_for_zero(medium_square[9], medium_hex[9]),3)} | {round(check_for_zero(medium_square[10], medium_hex[10]),3)} | {round(stale_pops_calc(medium_square[11], medium_hex[11]),3)} |\n")
+                file.write(f"| {i}_500x500 | {large_square[4]}/{large_hex[4]} | {large_square[5]}/{large_hex[5]} | {round(check_for_zero(large_square[6], large_hex[6]),3)} | {round(check_for_zero(large_square[7], large_hex[7]),3)} | {round(check_for_zero(large_square[8], large_hex[8]),3)} | {round(check_for_zero(large_square[9], large_hex[9]),3)} | {round(check_for_zero(large_square[10], large_hex[10]),3)} | {round(stale_pops_calc(large_square[11], large_hex[11]),3)} |\n")
+                file.write(f"| {i}_1000x1000 | {largest_square[4]}/{largest_hex[4]} | {largest_square[5]}/{largest_hex[5]} | {round(check_for_zero(largest_square[6], largest_hex[6]),3)} | {round(check_for_zero(largest_square[7], largest_hex[7]),3)} | {round(check_for_zero(largest_square[8], largest_hex[8]),3)} | {round(check_for_zero(largest_square[9], largest_hex[9]),3)} | {round(check_for_zero(largest_square[10], largest_hex[10]),3)} | {round(stale_pops_calc(largest_square[11], largest_hex[11]),3)} |\n")
 if __name__ == "__main__":
     report_generator()
