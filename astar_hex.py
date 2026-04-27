@@ -94,7 +94,7 @@ def algorithm(draw, grid, start, end):
         if current != start:
             current.make_closed()
 
-    return "No path was found", ""
+    return "No path was found", "", stats
 if __name__ == "__main__":
     import sys
     from visualizer import Visualizer
