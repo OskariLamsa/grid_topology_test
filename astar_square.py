@@ -60,7 +60,7 @@ def algorithm(draw, grid, start, end):
         if current == end:
             reconstruct_path(came_from, end, draw)
             end.make_end()
-            sleep(5)
+            #sleep(5)
             return time.time() - start_time, g_score[end], stats
 
         closed.add(current)
@@ -96,7 +96,14 @@ def algorithm(draw, grid, start, end):
         if current != start:
             current.make_closed()
 
-    return "No path was found", ""
+    return "No path was found", "", {
+        "heap_pushes": 0,
+        "max_heap_size": 0,
+        "heap_pops" : 0,
+        "expanded_nodes": 0,
+        "max_open_unique_nodes": 0,
+        "stale_pops": 0,
+    }
 if __name__ == "__main__":
     import sys
     from visualizer import Visualizer
