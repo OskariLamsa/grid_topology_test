@@ -279,7 +279,7 @@ class Visualizer:
             self._dirty_nodes.add(("square",spot.row, spot.col, rect.x, rect.y, rect.w, rect.h))
         elif spot.mode == "hex":
             self._dirty_nodes.add(("hex", spot.row, spot.col, *spot.get_hex_points()))
-    
+
     def draw(self):
         if not self._initial_drawn:
             self.win.blit(self.background, (0, 0))
@@ -324,10 +324,10 @@ class Visualizer:
         except ValueError:
             #print(rects_to_update, node)
             pass
-    """
-    def draw(self):
+
+    def draw_nothing(self):
         pass
-    """    
+        
     def get_clicked_pos(self, pos):
         x, y = pos
         if self.mode == "hex":
@@ -449,10 +449,12 @@ class Visualizer:
                         return True   # setup done
                     if event.key == pygame.K_c:
                         self.reset_grid()
-    def run_algorithm(self, algorithm_callable):
+    def run_algorithm(self, algorithm_callable, headless = False):
         self._update_all_neighbors()
-        return algorithm_callable(lambda: self.draw(), self.grid, self.start, self.end)
-
+        if headless == False:
+            return algorithm_callable(lambda: self.draw(), self.grid, self.start, self.end)
+        else:
+            return algorithm_callable(lambda: self.draw_nothing(), self.grid, self.start, self.end)
     def snapshot_grid(self):
         return [[spot.color for spot in row] for row in self.grid]
     

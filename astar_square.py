@@ -20,7 +20,7 @@ def h(p1, p2):
     x2, y2 = p2
     x_distance = abs(x1 - x2)
     y_distance = abs(y1 - y2)
-    result = (max(x_distance,y_distance) + (sqrt(2)-1)*min(x_distance, y_distance)))
+    result = (max(x_distance,y_distance) + (sqrt(2)-1)*min(x_distance, y_distance))
     return result
 def reconstruct_path(came_from, current, draw):
     while current in came_from:
@@ -79,7 +79,7 @@ def algorithm(draw, grid, start, end):
                 f_score = temp_g_score + heuristic
 
                 count += 1
-                open_set.put((f_score, heuristic, count, neighbor))
+                open_set.put((f_score, -temp_g_score, count, neighbor))
                 stats["heap_pushes"] += 1
                 open_nodes.add(neighbor)
                 stats["max_heap_size"] = max(
