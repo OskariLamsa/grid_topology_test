@@ -26,16 +26,16 @@ test_all.py-skripti testaa jokaisen verkon jokaisessa kansiossa 0.1, 0.2, 0,3 ja
 md_generator.py lukee testidatan csv tiedostot, ja muodostaa jokaista tiheyttä kohden md-tiedoston, jonka voi lukea helposti.
 ![md kuva](mdimage.png)
 Jokainen rivi md-tiedostossa edustaa yhtä neliö ja kuusioparia yhdestä solmumäärästä, tietystä alkuperäiskartassa. Kuvassa on alkuperäiskartan 0 edustusta neljässä eri solmumäärässä. Kolumneissa 1-9, vasemmalta oikealle on:
-1: Kartan nimi, ja solmumäärä. Järjestetty niin, että jokaisen alkuperäiskartan kaikki solmuedustukset on peräkkäin.
-2: Neliöverkon suoritusaika, Kuusioverkon suoritusaika
-3: Polun mitta neliöverkossa, polun mitta kuusioverkossa.
+1. Kartan nimi, ja solmumäärä. Järjestetty niin, että jokaisen alkuperäiskartan kaikki solmuedustukset on peräkkäin.
+2. Neliöverkon suoritusaika, Kuusioverkon suoritusaika
+3. Polun mitta neliöverkossa, polun mitta kuusioverkossa.
 
 Seuraavat arvot ovat suhdelukuja, neliöt / kuusiot.
 
-4: Raaka määrä A-listaan lisättyjen solmujen määrä
-5: A-listan raaka maksimikoko
-6: A-listan raa-at poiminnat
-7: Laajennettujen solmujen määrä, eli ei sisällä stale poppeja.
-8: A-listan raaka maksimikoko, josta on poistettu ylimääräiset solmut
-9: Stale popit, eli A-listan noudot, joita ei avata, koska solmu on jo suljettu.
+4. Raaka määrä A-listaan lisättyjen solmujen määrä
+5. A-listan raaka maksimikoko
+6. A-listan raa-at poiminnat
+7. Laajennettujen solmujen määrä, eli ei sisällä stale poppeja.
+8. A-listan raaka maksimikoko, josta on poistettu ylimääräiset solmut
+9. Stale popit, eli A-listan noudot, joita ei avata, koska solmu on jo suljettu.
 
