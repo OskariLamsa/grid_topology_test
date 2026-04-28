@@ -96,14 +96,7 @@ def algorithm(draw, grid, start, end):
         if current != start:
             current.make_closed()
 
-    return "No path was found", "", {
-        "heap_pushes": 0,
-        "max_heap_size": 0,
-        "heap_pops" : 0,
-        "expanded_nodes": 0,
-        "max_open_unique_nodes": 0,
-        "stale_pops": 0,
-    }
+    return "No path was found", "", stats
 if __name__ == "__main__":
     import sys
     from visualizer import Visualizer
