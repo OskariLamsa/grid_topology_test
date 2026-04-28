@@ -4,7 +4,7 @@ from terrain_generator import TerrainConfig
 
 def generate(maps_per_permutation=50):
     nodecounts = (50, 200, 500, 1000)
-    densities = (0.40, None)
+    densities = ("0.10", "0.2", "0.3", "0.4")
 
     for density in densities:
         if density == None:
