@@ -23,5 +23,7 @@ test_all.py-skripti testaa jokaisen verkon jokaisessa kansiossa 0.1, 0.2, 0,3 ja
 2 ja 3 ovat suurempia kuin voisi olettaa, PriorityQueue'n rajoitusten takia. 4,5 ovat siis korjattuja versioita näistä. Jos nämä kartat ajettaisiin toisella koodikielellä, saadut arvot edustaisivat datapisteitä 4 ja 5.
 
 ## Md-tiedostot
-md_generator.py lukee testidatan csv tiedostot, ja muodostaa jokaista tiheyttä kohden md-tiedoston, jonka voi lukea helposti. 
+md_generator.py lukee testidatan csv tiedostot, ja muodostaa jokaista tiheyttä kohden md-tiedoston, jonka voi lukea helposti.
+![md kuva](mdimage.png)
+Jokainen rivi md-tiedostossa edustaa yhtä neliö ja kuusioparia yhdestä solmumäärästä, tietystä alkuperäiskartassa. 
 
