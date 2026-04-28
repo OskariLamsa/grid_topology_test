@@ -59,7 +59,7 @@ def report_generator():
                     square_list.append(map)
                 else:
                     raise ValueError(f"Invalid shape type:{map[0]}")
-            for i in range(0, (int(len(square_list)/6))):
+            for i in range(0, 50):
                 small_square =find_map_by_name(square_list, f"{density}_50x50square{i}")
                 medium_square =find_map_by_name(square_list, f"{density}_200x200square{i}")
                 large_square =find_map_by_name(square_list, f"{density}_500x500square{i}")
