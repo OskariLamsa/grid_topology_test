@@ -48,6 +48,7 @@ def report_generator():
     for density in ["0.10", "0.20", "0.30", "0.40"]:
         with open(f"{density}.md", "w", encoding = "utf-8") as file:
             file.write(f"| Kartta | neliö- kuusioaika | neliö- kuusio etäisyys | A-listan lisäykset | A-listan maksimikoko | A-listan poiminnat | Laajennettujen solmujen määrä | Maksimi avoimien uniikkien solmujen määrä | Stale popit |\n")
+            file.write("|---|---|---|---|---|---|---|---|---|\n")
             data =open_file(f"test_{density}.csv")
             hex_list = []
             square_list = []
