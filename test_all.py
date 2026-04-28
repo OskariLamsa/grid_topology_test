@@ -17,7 +17,7 @@ def test_all():
     for map_list in list_of_lists:
 
         # Raportti jokaista tiheyttä varten
-        with open(f"test_{filename[counter]}.csv", "w") as file:
+        with open(f"test_{filename[counter]}", "w") as file:
             writer = csv.writer(file, delimiter=';')
             for map in map_list:
                 map_data = map_loader(f"{map}.csv", None, filename[counter])
@@ -33,7 +33,7 @@ def test_all():
                     time, distance, stats = v.run_algorithm(astar_hex.algorithm, headless = True)
                 else:
                     raise ValueError(f"Invalid map name: {map}")
-                if type(distance) == int:
+                if distance != "":
                     if mode == "square":
                         distance = distance * square_move_distance
                     else:
