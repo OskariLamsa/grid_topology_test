@@ -8,3 +8,5 @@ Koe aloitetaan luomalla joukko alkuperäiskarttoja, jotka edustavat maastoa, jos
 Alkuperäiskartat löytyvät kansiosta plot_images.
 ## Neliö- ja kuusioverkkojen muodostus.
 Kun alkuperäiskartta, ja aloitus- sekä maalikoordinaatit on valittu, muodostetaan 8 eri verkkoa niiden pohjalta. 50x50, 200x200, 500x500x ja 1000x1000 solmun edustus alkuperäiskartasta neliöillä ja kuusioilla. Verkot muodostetaan niin, että verkko asetetaan loogisesti alkuperäiskartan ylle. Mikäli solmun keskipiste on esteen päällä, niin solmu merkitään esteeksi. Seuraavaksi lasketaan aloitus- ja maalisolmun niin, että aiemmin laskettujen koordinaattien perusteella kaikista lähin avoin solmu merkitään aloitukseksi, ja maaliksi.
+![linkki kuvaan](200x200image.png)
+
