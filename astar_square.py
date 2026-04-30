@@ -79,7 +79,7 @@ def algorithm(draw, grid, start, end):
                 f_score = temp_g_score + heuristic
 
                 count += 1
-                open_set.put((f_score, -temp_g_score, count, neighbor))
+                open_set.put((f_score, heuristic, -count, neighbor))
                 stats["heap_pushes"] += 1
                 open_nodes.add(neighbor)
                 stats["max_heap_size"] = max(
@@ -90,7 +90,7 @@ def algorithm(draw, grid, start, end):
                     len(open_nodes))
                 if neighbor != end:
                     neighbor.make_open()
-
+        sleep(0.1)
         draw()
 
         if current != start:
