@@ -788,12 +788,13 @@ if __name__ == "__main__":
     square_goal = sampled["square_goal"]
     hex_start = sampled["hex_start"]
     hex_goal = sampled["hex_goal"]
-    write_map_csv("100x100square001.csv", config.rows, config.cols, blocked_square_nodes, square_start, square_goal)
+    write_map_csv("100x100square001.csv", config.rows, config.cols, blocked_square_nodes, "mapsdata", square_start, square_goal)
     write_map_csv(
         "100x100hex001.csv",
         hex_dims["hex_rows"],
         hex_dims["hex_cols"],
         blocked_hexes,
+        "mapsdata",
         hex_start,
         hex_goal
     )
